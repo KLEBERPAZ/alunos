@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fazer Aposta</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Fazer Aposta</h1>
+        <form action="{{ url_for('place_bet') }}" method="post">
+            {% if tipo_aposta == "mega_sena" %}
+                {% for i in range(1, 7) %}
+                <div>
+                    <label for="numero{{ i }}">Número {{ i }}:</label>
+                    <select id="numero{{ i }}" name="numero{{ i }}" required>
+                        {% for j in range(1, 61) %}
+                            <option value="{{ '{:02d}'.format(j) }}">{{ '{:02d}'.format(j) }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% endfor %}
+            {% elif tipo_aposta == "loto_facil" %}
+                {% for i in range(1, 16) %}
+                <div>
+                    <label for="numero{{ i }}">Número {{ i }}:</label>
+                    <select id="numero{{ i }}" name="numero{{ i }}" required>
+                        {% for j in range(1, 26) %}
+                            <option value="{{ '{:02d}'.format(j) }}">{{ '{:02d}'.format(j) }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% endfor %}
+            {% endif %}
+            <div>
+                <label for="valor">Valor da Aposta:</label>
+                <input type="number" id="valor" name="valor" required>
+            </div>
+            <div>
+                <label for="participante">Participante:</label>
+                <select id="participante" name="participante" required>
+                    {% for participante in participantes %}
+                        <option value="{{ participante.nome }}">{{ participante.nome }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit">Apostar</button>
+        </form>
+        <a href="{{ url_for('home') }}">Voltar</a>
+    </div>
+</body>
+</html>

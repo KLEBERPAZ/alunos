@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ver Apostas</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Ver Apostas</h1>
+        <ul>
+            {% for aposta in apostas %}
+                <li>
+                    Participante: {{ aposta.participante }} - Números: {{ aposta.numeros|join(', ') }} - Valor: R$ {{ aposta.valor }} - Tipo: {{ 'Mega Sena' if aposta.tipo_aposta == 'mega_sena' else 'Loto Fácil' }}
+                    <form action="{{ url_for('delete_bet', bet_id=loop.index0) }}" method="post" style="display:inline;">
+                        <button type="submit" style="margin-left: 10px; color: red;">Excluir</button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+        <a href="{{ url_for('home') }}">Voltar</a>
+    </div>
+</body>
+</html>
