@@ -81786,7 +81786,7 @@ rtl.module("WEBLib.ComCtrls",["System","Classes","SysUtils","Web","WEBLib.Contro
     };
   };
 },["WEBLib.Buttons","WEBLib.Forms","WEBLib.Utils"]);
-rtl.module("Unit1",["System","SysUtils","Classes","Generics.Collections","JS","Web","WEBLib.Graphics","WEBLib.Controls","WEBLib.Forms","WEBLib.Dialogs","WEBLib.StdCtrls","WEBLib.Grids","WEBLib.ExtCtrls","WEBLib.ComCtrls","DB","WEBLib.StdCtrls","WEBLib.Controls","Types","WEBLib.Grids"],function () {
+rtl.module("Unit1",["System","SysUtils","Classes","Generics.Collections","JS","Web","WEBLib.Graphics","WEBLib.Controls","WEBLib.Forms","WEBLib.Dialogs","WEBLib.StdCtrls","WEBLib.Grids","WEBLib.ExtCtrls","WEBLib.ComCtrls","Types","WEBLib.Grids","WEBLib.StdCtrls","WEBLib.Controls"],function () {
   "use strict";
   var $mod = this;
   rtl.createClass(this,"TAluno",pas.System.TObject,function () {
@@ -81901,7 +81901,7 @@ rtl.module("Unit1",["System","SysUtils","Classes","Generics.Collections","JS","W
         pas["WEBLib.Dialogs"].ShowMessage("Selecione um aluno para excluir.");
         return;
       };
-      if (!pas["WEBLib.Dialogs"].Confirm("Deseja realmente excluir este aluno?")) return;
+      if (!window.confirm("Deseja realmente excluir este aluno?")) return;
       for (var $l = 0, $end = this.FAlunos.FLength - 1; $l <= $end; $l++) {
         I = $l;
         if (this.FAlunos.GetItem(I).FId === this.FIdSelecionado) {
@@ -81918,8 +81918,8 @@ rtl.module("Unit1",["System","SysUtils","Classes","Generics.Collections","JS","W
       this.LimparCampos();
       this.HabilitarCampos(false);
     };
-    this.WebGridAlunosCellClick = function (Sender, ACol, ARow) {
-      if (ARow === 0) return;
+    this.WebGridAlunosClickCell = function (Sender, ACol, ARow) {
+      if (ARow <= 0) return;
       if ((ARow - 1) < this.FAlunos.FLength) {
         this.SelecionarAluno(this.FAlunos.GetItem(ARow - 1).FId);
         this.HabilitarCampos(true);
@@ -81983,6 +81983,7 @@ rtl.module("Unit1",["System","SysUtils","Classes","Generics.Collections","JS","W
       this.WebEditCurso.SetEnabled(AHabilitado);
       this.WebButtonSalvar.SetEnabled(AHabilitado);
       this.WebButtonCancelar.SetEnabled(AHabilitado);
+      this.WebButtonNovo.SetEnabled(true);
     };
     this.SelecionarAluno = function (AId) {
       var I = 0;
@@ -82199,6 +82200,7 @@ rtl.module("Unit1",["System","SysUtils","Classes","Generics.Collections","JS","W
         this.WebGridAlunos.FRange.FStep = 1.000000000000000000;
         this.WebGridAlunos.SetHeightPercent(100.000000000000000000);
         this.WebGridAlunos.SetWidthPercent(100.000000000000000000);
+        this.SetEvent$1(this.WebGridAlunos,this,"OnClickCell","WebGridAlunosClickCell");
       } finally {
         this.WebPanel1.AfterLoadDFMValues();
         this.WebLabelTitulo.AfterLoadDFMValues();
@@ -82240,7 +82242,7 @@ rtl.module("Unit1",["System","SysUtils","Classes","Generics.Collections","JS","W
     $r.addMethod("WebButtonNovoClick",0,[["Sender",pas.System.$rtti["TObject"]]],4);
     $r.addMethod("WebButtonExcluirClick",0,[["Sender",pas.System.$rtti["TObject"]]],4);
     $r.addMethod("WebButtonCancelarClick",0,[["Sender",pas.System.$rtti["TObject"]]],4);
-    $r.addMethod("WebGridAlunosCellClick",0,[["Sender",pas.System.$rtti["TObject"]],["ACol",rtl.longint],["ARow",rtl.longint]],4);
+    $r.addMethod("WebGridAlunosClickCell",0,[["Sender",pas.System.$rtti["TObject"]],["ACol",rtl.longint],["ARow",rtl.longint]],4);
   });
   this.Form1 = null;
 });
