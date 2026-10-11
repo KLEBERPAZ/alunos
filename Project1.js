@@ -81816,7 +81816,6 @@ rtl.module("Unit1",["System","SysUtils","Classes","Generics.Collections","JS","W
       this.WebButtonSalvar = null;
       this.WebButtonExcluir = null;
       this.WebButtonCancelar = null;
-      this.WebButtonRelatorio = null;
       this.WebGridAlunos = null;
       this.FAlunos = null;
       this.FIdSelecionado = 0;
@@ -81837,7 +81836,6 @@ rtl.module("Unit1",["System","SysUtils","Classes","Generics.Collections","JS","W
       this.WebButtonSalvar = undefined;
       this.WebButtonExcluir = undefined;
       this.WebButtonCancelar = undefined;
-      this.WebButtonRelatorio = undefined;
       this.WebGridAlunos = undefined;
       this.FAlunos = undefined;
       pas["WEBLib.Forms"].TForm.$final.call(this);
@@ -81851,7 +81849,6 @@ rtl.module("Unit1",["System","SysUtils","Classes","Generics.Collections","JS","W
       this.CarregarGrid();
       this.LimparCampos();
       this.HabilitarCampos(false);
-      this.WebButtonRelatorio.SetEnabled(true);
     };
     this.WebButtonSalvarClick = function (Sender) {
       var A = null;
@@ -81921,13 +81918,6 @@ rtl.module("Unit1",["System","SysUtils","Classes","Generics.Collections","JS","W
       this.LimparCampos();
       this.HabilitarCampos(false);
     };
-    this.WebButtonRelatorioClick = function (Sender) {
-      if (this.FAlunos.FLength === 0) {
-        pas["WEBLib.Dialogs"].ShowMessage("Não há alunos cadastrados para gerar o relatório.");
-        return;
-      };
-      pas["WEBLib.Dialogs"].ShowMessage("Relatório gerado. Copie o conteúdo para um arquivo .html e abra no navegador.");
-    };
     this.WebGridAlunosClickCell = function (Sender, ACol, ARow) {
       if (ARow <= 0) return;
       if ((ARow - 1) < this.FAlunos.FLength) {
@@ -81994,7 +81984,6 @@ rtl.module("Unit1",["System","SysUtils","Classes","Generics.Collections","JS","W
       this.WebButtonSalvar.SetEnabled(AHabilitado);
       this.WebButtonCancelar.SetEnabled(AHabilitado);
       this.WebButtonNovo.SetEnabled(true);
-      this.WebButtonRelatorio.SetEnabled(true);
     };
     this.SelecionarAluno = function (AId) {
       var I = 0;
@@ -82010,40 +81999,6 @@ rtl.module("Unit1",["System","SysUtils","Classes","Generics.Collections","JS","W
           break;
         };
       };
-    };
-    this.EscapeHtml = function (S) {
-      var Result = "";
-      Result = S;
-      Result = pas.SysUtils.StringReplace(Result,"&","&amp;",rtl.createSet(pas.SysUtils.TStringReplaceFlag.rfReplaceAll));
-      Result = pas.SysUtils.StringReplace(Result,"<","&lt;",rtl.createSet(pas.SysUtils.TStringReplaceFlag.rfReplaceAll));
-      Result = pas.SysUtils.StringReplace(Result,">","&gt;",rtl.createSet(pas.SysUtils.TStringReplaceFlag.rfReplaceAll));
-      Result = pas.SysUtils.StringReplace(Result,'"',"&quot;",rtl.createSet(pas.SysUtils.TStringReplaceFlag.rfReplaceAll));
-      return Result;
-    };
-    this.HtmlToJsString = function (S) {
-      var Result = "";
-      Result = S;
-      Result = pas.SysUtils.StringReplace(Result,"\\","\\\\",rtl.createSet(pas.SysUtils.TStringReplaceFlag.rfReplaceAll));
-      Result = pas.SysUtils.StringReplace(Result,'"','\\"',rtl.createSet(pas.SysUtils.TStringReplaceFlag.rfReplaceAll));
-      Result = pas.SysUtils.StringReplace(Result,"\r","",rtl.createSet(pas.SysUtils.TStringReplaceFlag.rfReplaceAll));
-      Result = pas.SysUtils.StringReplace(Result,"\n","\\n",rtl.createSet(pas.SysUtils.TStringReplaceFlag.rfReplaceAll));
-      Result = '"' + Result + '"';
-      return Result;
-    };
-    this.GerarHtmlRelatorio = function () {
-      var Result = "";
-      var I = 0;
-      var Html = "";
-      Html = '<!DOCTYPE html><html><head><meta charset="utf-8">' + "<title>Relatório de Alunos</title>" + "<style>" + "  body { font-family: Arial, sans-serif; margin: 30px; color: #222; }" + "  h1 { text-align: center; color: #1a4d8f; }" + "  .data { text-align: right; font-size: 12px; color: #666; margin-bottom: 15px; }" + "  table { width: 100%; border-collapse: collapse; margin-top: 10px; }" + "  th { background: #1a4d8f; color: #fff; padding: 8px; text-align: left; }" + "  td { border-bottom: 1px solid #ccc; padding: 8px; }" + "  tr:nth-child(even) { background: #f4f7fb; }" + "  .footer { margin-top: 30px; text-align: center; font-size: 12px; color: #888; }" + "</style></head><body>";
-      Html = Html + "<h1>Relatório de Alunos Cadastrados</h1>" + '<div class="data">Emitido em: ' + pas.SysUtils.FormatDateTime("dd/mm/yyyy hh:nn",pas.SysUtils.Now()) + "</div>";
-      Html = Html + "<table>" + "<thead><tr>" + "<th>ID</th><th>Nome</th><th>E-mail</th><th>Telefone</th><th>Curso</th>" + "</tr></thead><tbody>";
-      for (var $l = 0, $end = this.FAlunos.FLength - 1; $l <= $end; $l++) {
-        I = $l;
-        Html = Html + "<tr>" + "<td>" + pas.SysUtils.IntToStr(this.FAlunos.GetItem(I).FId) + "</td>" + "<td>" + this.EscapeHtml(this.FAlunos.GetItem(I).FNome) + "</td>" + "<td>" + this.EscapeHtml(this.FAlunos.GetItem(I).FEmail) + "</td>" + "<td>" + this.EscapeHtml(this.FAlunos.GetItem(I).FTelefone) + "</td>" + "<td>" + this.EscapeHtml(this.FAlunos.GetItem(I).FCurso) + "</td>" + "</tr>";
-      };
-      Html = Html + "</tbody></table>" + '<div class="footer">Total de alunos: ' + pas.SysUtils.IntToStr(this.FAlunos.FLength) + "</div>" + "</body></html>";
-      Result = Html;
-      return Result;
     };
     this.LoadDFMValues = function () {
       pas["WEBLib.Forms"].TCustomForm.LoadDFMValues.call(this);
@@ -82061,7 +82016,6 @@ rtl.module("Unit1",["System","SysUtils","Classes","Generics.Collections","JS","W
       this.WebButtonSalvar = pas["WEBLib.StdCtrls"].TButton.$create("Create$1",[this]);
       this.WebButtonExcluir = pas["WEBLib.StdCtrls"].TButton.$create("Create$1",[this]);
       this.WebButtonCancelar = pas["WEBLib.StdCtrls"].TButton.$create("Create$1",[this]);
-      this.WebButtonRelatorio = pas["WEBLib.StdCtrls"].TButton.$create("Create$1",[this]);
       this.WebGridAlunos = pas["WEBLib.Grids"].TStringGrid.$create("Create$1",[this]);
       this.WebLabel1.BeforeLoadDFMValues();
       this.WebLabel2.BeforeLoadDFMValues();
@@ -82077,12 +82031,11 @@ rtl.module("Unit1",["System","SysUtils","Classes","Generics.Collections","JS","W
       this.WebButtonSalvar.BeforeLoadDFMValues();
       this.WebButtonExcluir.BeforeLoadDFMValues();
       this.WebButtonCancelar.BeforeLoadDFMValues();
-      this.WebButtonRelatorio.BeforeLoadDFMValues();
       this.WebGridAlunos.BeforeLoadDFMValues();
       try {
         this.SetName("Form1");
-        this.SetWidth(640);
-        this.SetHeight(480);
+        this.SetWidth(900);
+        this.SetHeight(560);
         this.SetCaption("Cadastro de Alunos");
         this.SetColor(15790320);
         this.FFont.FCharset = 1;
@@ -82136,9 +82089,8 @@ rtl.module("Unit1",["System","SysUtils","Classes","Generics.Collections","JS","W
         this.WebPanel1.SetName("WebPanel1");
         this.WebPanel1.SetLeft(0);
         this.WebPanel1.SetTop(0);
-        this.WebPanel1.SetWidth(640);
+        this.WebPanel1.SetWidth(900);
         this.WebPanel1.SetHeight(60);
-        this.WebPanel1.SetElementClassName("panel-primary");
         this.WebPanel1.SetAlign(pas["WEBLib.Controls"].TAlign.alTop);
         this.WebPanel1.SetTabOrder(0);
         this.WebLabelTitulo.SetParentComponent(this.WebPanel1);
@@ -82155,7 +82107,6 @@ rtl.module("Unit1",["System","SysUtils","Classes","Generics.Collections","JS","W
         this.WebLabelTitulo.FFont.SetStyle(rtl.createSet(pas["WEBLib.Graphics"].TFontStyle.fsBold));
         this.WebLabelTitulo.SetHeightPercent(100.000000000000000000);
         this.WebLabelTitulo.SetParentFont(false);
-        this.WebLabelTitulo.SetTransparent(false);
         this.WebLabelTitulo.SetWidthPercent(100.000000000000000000);
         this.WebEditNome.SetParentComponent(this);
         this.WebEditNome.SetName("WebEditNome");
@@ -82164,6 +82115,7 @@ rtl.module("Unit1",["System","SysUtils","Classes","Generics.Collections","JS","W
         this.WebEditNome.SetWidth(300);
         this.WebEditNome.SetHeight(25);
         this.WebEditNome.SetHeightPercent(100.000000000000000000);
+        this.WebEditNome.SetTabOrder(1);
         this.WebEditNome.SetWidthPercent(100.000000000000000000);
         this.WebEditEmail.SetParentComponent(this);
         this.WebEditEmail.SetName("WebEditEmail");
@@ -82172,7 +82124,7 @@ rtl.module("Unit1",["System","SysUtils","Classes","Generics.Collections","JS","W
         this.WebEditEmail.SetWidth(300);
         this.WebEditEmail.SetHeight(25);
         this.WebEditEmail.SetHeightPercent(100.000000000000000000);
-        this.WebEditEmail.SetTabOrder(1);
+        this.WebEditEmail.SetTabOrder(2);
         this.WebEditEmail.SetWidthPercent(100.000000000000000000);
         this.WebEditTelefone.SetParentComponent(this);
         this.WebEditTelefone.SetName("WebEditTelefone");
@@ -82181,7 +82133,7 @@ rtl.module("Unit1",["System","SysUtils","Classes","Generics.Collections","JS","W
         this.WebEditTelefone.SetWidth(300);
         this.WebEditTelefone.SetHeight(25);
         this.WebEditTelefone.SetHeightPercent(100.000000000000000000);
-        this.WebEditTelefone.SetTabOrder(2);
+        this.WebEditTelefone.SetTabOrder(3);
         this.WebEditTelefone.SetWidthPercent(100.000000000000000000);
         this.WebEditCurso.SetParentComponent(this);
         this.WebEditCurso.SetName("WebEditCurso");
@@ -82190,69 +82142,58 @@ rtl.module("Unit1",["System","SysUtils","Classes","Generics.Collections","JS","W
         this.WebEditCurso.SetWidth(300);
         this.WebEditCurso.SetHeight(25);
         this.WebEditCurso.SetHeightPercent(100.000000000000000000);
-        this.WebEditCurso.SetTabOrder(3);
+        this.WebEditCurso.SetTabOrder(4);
         this.WebEditCurso.SetWidthPercent(100.000000000000000000);
         this.WebButtonNovo.SetParentComponent(this);
         this.WebButtonNovo.SetName("WebButtonNovo");
         this.WebButtonNovo.SetLeft(420);
         this.WebButtonNovo.SetTop(87);
-        this.WebButtonNovo.SetWidth(110);
+        this.WebButtonNovo.SetWidth(130);
         this.WebButtonNovo.SetHeight(30);
         this.WebButtonNovo.SetCaption("Novo");
         this.WebButtonNovo.SetHeightPercent(100.000000000000000000);
-        this.WebButtonNovo.SetTabOrder(4);
+        this.WebButtonNovo.SetTabOrder(5);
         this.WebButtonNovo.SetWidthPercent(100.000000000000000000);
         this.SetEvent$1(this.WebButtonNovo,this,"OnClick","WebButtonNovoClick");
         this.WebButtonSalvar.SetParentComponent(this);
         this.WebButtonSalvar.SetName("WebButtonSalvar");
         this.WebButtonSalvar.SetLeft(420);
         this.WebButtonSalvar.SetTop(122);
-        this.WebButtonSalvar.SetWidth(110);
+        this.WebButtonSalvar.SetWidth(130);
         this.WebButtonSalvar.SetHeight(30);
         this.WebButtonSalvar.SetCaption("Salvar");
         this.WebButtonSalvar.SetHeightPercent(100.000000000000000000);
-        this.WebButtonSalvar.SetTabOrder(5);
+        this.WebButtonSalvar.SetTabOrder(6);
         this.WebButtonSalvar.SetWidthPercent(100.000000000000000000);
         this.SetEvent$1(this.WebButtonSalvar,this,"OnClick","WebButtonSalvarClick");
         this.WebButtonExcluir.SetParentComponent(this);
         this.WebButtonExcluir.SetName("WebButtonExcluir");
         this.WebButtonExcluir.SetLeft(420);
         this.WebButtonExcluir.SetTop(157);
-        this.WebButtonExcluir.SetWidth(110);
+        this.WebButtonExcluir.SetWidth(130);
         this.WebButtonExcluir.SetHeight(30);
         this.WebButtonExcluir.SetCaption("Excluir");
         this.WebButtonExcluir.SetHeightPercent(100.000000000000000000);
-        this.WebButtonExcluir.SetTabOrder(6);
+        this.WebButtonExcluir.SetTabOrder(7);
         this.WebButtonExcluir.SetWidthPercent(100.000000000000000000);
         this.SetEvent$1(this.WebButtonExcluir,this,"OnClick","WebButtonExcluirClick");
         this.WebButtonCancelar.SetParentComponent(this);
         this.WebButtonCancelar.SetName("WebButtonCancelar");
         this.WebButtonCancelar.SetLeft(420);
         this.WebButtonCancelar.SetTop(192);
-        this.WebButtonCancelar.SetWidth(110);
+        this.WebButtonCancelar.SetWidth(130);
         this.WebButtonCancelar.SetHeight(30);
         this.WebButtonCancelar.SetCaption("Cancelar");
         this.WebButtonCancelar.SetHeightPercent(100.000000000000000000);
-        this.WebButtonCancelar.SetTabOrder(7);
+        this.WebButtonCancelar.SetTabOrder(8);
         this.WebButtonCancelar.SetWidthPercent(100.000000000000000000);
         this.SetEvent$1(this.WebButtonCancelar,this,"OnClick","WebButtonCancelarClick");
-        this.WebButtonRelatorio.SetParentComponent(this);
-        this.WebButtonRelatorio.SetName("WebButtonRelatorio");
-        this.WebButtonRelatorio.SetLeft(420);
-        this.WebButtonRelatorio.SetTop(227);
-        this.WebButtonRelatorio.SetWidth(110);
-        this.WebButtonRelatorio.SetHeight(30);
-        this.WebButtonRelatorio.SetCaption("Relatório PDF");
-        this.WebButtonRelatorio.SetHeightPercent(100.000000000000000000);
-        this.WebButtonRelatorio.SetTabOrder(8);
-        this.WebButtonRelatorio.SetWidthPercent(100.000000000000000000);
-        this.SetEvent$1(this.WebButtonRelatorio,this,"OnClick","WebButtonRelatorioClick");
         this.WebGridAlunos.SetParentComponent(this);
         this.WebGridAlunos.SetName("WebGridAlunos");
         this.WebGridAlunos.SetLeft(20);
-        this.WebGridAlunos.SetTop(280);
-        this.WebGridAlunos.SetWidth(850);
-        this.WebGridAlunos.SetHeight(220);
+        this.WebGridAlunos.SetTop(240);
+        this.WebGridAlunos.SetWidth(860);
+        this.WebGridAlunos.SetHeight(280);
         this.WebGridAlunos.SetTabOrder(9);
         this.WebGridAlunos.FFixedFont.FCharset = 1;
         this.WebGridAlunos.FFixedFont.SetColor(65793);
@@ -82279,7 +82220,6 @@ rtl.module("Unit1",["System","SysUtils","Classes","Generics.Collections","JS","W
         this.WebButtonSalvar.AfterLoadDFMValues();
         this.WebButtonExcluir.AfterLoadDFMValues();
         this.WebButtonCancelar.AfterLoadDFMValues();
-        this.WebButtonRelatorio.AfterLoadDFMValues();
         this.WebGridAlunos.AfterLoadDFMValues();
       };
     };
@@ -82300,14 +82240,12 @@ rtl.module("Unit1",["System","SysUtils","Classes","Generics.Collections","JS","W
     $r.addField("WebButtonSalvar",pas["WEBLib.StdCtrls"].$rtti["TButton"],4);
     $r.addField("WebButtonExcluir",pas["WEBLib.StdCtrls"].$rtti["TButton"],4);
     $r.addField("WebButtonCancelar",pas["WEBLib.StdCtrls"].$rtti["TButton"],4);
-    $r.addField("WebButtonRelatorio",pas["WEBLib.StdCtrls"].$rtti["TButton"],4);
     $r.addField("WebGridAlunos",pas["WEBLib.Grids"].$rtti["TStringGrid"],4);
     $r.addMethod("WebFormCreate",0,[["Sender",pas.System.$rtti["TObject"]]],4);
     $r.addMethod("WebButtonSalvarClick",0,[["Sender",pas.System.$rtti["TObject"]]],4);
     $r.addMethod("WebButtonNovoClick",0,[["Sender",pas.System.$rtti["TObject"]]],4);
     $r.addMethod("WebButtonExcluirClick",0,[["Sender",pas.System.$rtti["TObject"]]],4);
     $r.addMethod("WebButtonCancelarClick",0,[["Sender",pas.System.$rtti["TObject"]]],4);
-    $r.addMethod("WebButtonRelatorioClick",0,[["Sender",pas.System.$rtti["TObject"]]],4);
     $r.addMethod("WebGridAlunosClickCell",0,[["Sender",pas.System.$rtti["TObject"]],["ACol",rtl.longint],["ARow",rtl.longint]],4);
   });
   this.Form1 = null;
