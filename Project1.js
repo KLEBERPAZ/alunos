@@ -85186,6 +85186,7 @@ rtl.module("Unit1",["System","SysUtils","Classes","Generics.Collections","JS","W
 rtl.module("UnitLogin",["System","SysUtils","JS","Web","WEBLib.Graphics","WEBLib.Controls","WEBLib.Forms","WEBLib.Dialogs","WEBLib.StdCtrls","WEBLib.ExtCtrls","WEBLib.StdCtrls","WEBLib.Controls","Classes"],function () {
   "use strict";
   var $mod = this;
+  var $impl = $mod.$impl;
   rtl.createClass(this,"TFormLogin",pas["WEBLib.Forms"].TForm,function () {
     this.$init = function () {
       pas["WEBLib.Forms"].TForm.$init.call(this);
@@ -85195,6 +85196,7 @@ rtl.module("UnitLogin",["System","SysUtils","JS","Web","WEBLib.Graphics","WEBLib
       this.WebLabel2 = null;
       this.WebEditUsuario = null;
       this.WebEditSenha = null;
+      this.WebCheckBoxSalvar = null;
       this.WebButtonEntrar = null;
       this.WebButtonSair = null;
     };
@@ -85205,28 +85207,36 @@ rtl.module("UnitLogin",["System","SysUtils","JS","Web","WEBLib.Graphics","WEBLib
       this.WebLabel2 = undefined;
       this.WebEditUsuario = undefined;
       this.WebEditSenha = undefined;
+      this.WebCheckBoxSalvar = undefined;
       this.WebButtonEntrar = undefined;
       this.WebButtonSair = undefined;
       pas["WEBLib.Forms"].TForm.$final.call(this);
     };
     this.WebButtonEntrarClick = function (Sender) {
-      if (pas.SysUtils.Trim(this.WebEditUsuario.GetText()) === "") {
+      var Usuario = "";
+      var Senha = "";
+      Usuario = pas.SysUtils.Trim(this.WebEditUsuario.GetText());
+      Senha = pas.SysUtils.Trim(this.WebEditSenha.GetText());
+      if (Usuario === "") {
         pas["WEBLib.Dialogs"].ShowMessage("Informe o usuário.");
         this.WebEditUsuario.SetFocus();
         return;
       };
-      if (pas.SysUtils.Trim(this.WebEditSenha.GetText()) === "") {
+      if (Senha === "") {
         pas["WEBLib.Dialogs"].ShowMessage("Informe a senha.");
         this.WebEditSenha.SetFocus();
         return;
       };
-      if (!this.ValidarLogin(pas.SysUtils.Trim(this.WebEditUsuario.GetText()),pas.SysUtils.Trim(this.WebEditSenha.GetText()))) {
+      if (!this.ValidarLogin(Usuario,Senha)) {
         pas["WEBLib.Dialogs"].ShowMessage("Usuário ou senha inválidos.");
         this.WebEditSenha.SetText("");
         this.WebEditSenha.SetFocus();
         return;
       };
-      pas["WEBLib.Forms"].Application.CreateForm(pas.Unit1.TForm1,{p: pas.Unit1, get: function () {
+      if (this.WebCheckBoxSalvar.GetChecked()) {
+        this.SalvarCredenciais(Usuario,Senha)}
+       else this.LimparCredenciaisSalvas();
+      if (!(pas.Unit1.Form1 != null)) pas["WEBLib.Forms"].Application.CreateForm(pas.Unit1.TForm1,{p: pas.Unit1, get: function () {
           return this.p.Form1;
         }, set: function (v) {
           this.p.Form1 = v;
@@ -85240,11 +85250,18 @@ rtl.module("UnitLogin",["System","SysUtils","JS","Web","WEBLib.Graphics","WEBLib
     this.WebFormCreate = function (Sender) {
       this.WebEditUsuario.SetText("");
       this.WebEditSenha.SetText("");
+      this.WebCheckBoxSalvar.SetChecked(false);
+      this.CarregarCredenciaisSalvas();
       this.CentralizarLogin();
-      this.WebEditUsuario.SetFocus();
+      if (this.WebEditUsuario.GetText() === "") {
+        this.WebEditUsuario.SetFocus()}
+       else this.WebEditSenha.SetFocus();
     };
     this.WebFormResize = function (Sender) {
       this.CentralizarLogin();
+    };
+    this.WebCheckBoxSalvarClick = function (Sender) {
+      if (!this.WebCheckBoxSalvar.GetChecked()) this.LimparCredenciaisSalvas();
     };
     this.ValidarLogin = function (AUsuario, ASenha) {
       var Result = false;
@@ -85257,7 +85274,7 @@ rtl.module("UnitLogin",["System","SysUtils","JS","Web","WEBLib.Graphics","WEBLib
       var LarguraTela = 0;
       var AlturaTela = 0;
       LarguraPainel = 420;
-      AlturaPainel = 280;
+      AlturaPainel = 320;
       LarguraTela = this.GetClientWidth();
       AlturaTela = this.GetClientHeight();
       if (LarguraTela < LarguraPainel) LarguraPainel = LarguraTela;
@@ -85278,12 +85295,37 @@ rtl.module("UnitLogin",["System","SysUtils","JS","Web","WEBLib.Graphics","WEBLib
       this.WebEditSenha.SetLeft(110);
       this.WebEditSenha.SetTop(117);
       this.WebEditSenha.SetWidth(270);
+      this.WebCheckBoxSalvar.SetLeft(110);
+      this.WebCheckBoxSalvar.SetTop(150);
       this.WebButtonEntrar.SetLeft(110);
-      this.WebButtonEntrar.SetTop(180);
+      this.WebButtonEntrar.SetTop(190);
       this.WebButtonEntrar.SetWidth(130);
       this.WebButtonSair.SetLeft(250);
-      this.WebButtonSair.SetTop(180);
+      this.WebButtonSair.SetTop(190);
       this.WebButtonSair.SetWidth(130);
+    };
+    this.CarregarCredenciaisSalvas = function () {
+      var Lembrar = "";
+      var UsuarioSalvo = "";
+      var SenhaSalva = "";
+      Lembrar = window.localStorage.getItem($impl.CHAVE_LEMBRAR);
+      if (Lembrar === "1") {
+        UsuarioSalvo = window.localStorage.getItem($impl.CHAVE_USUARIO);
+        SenhaSalva = window.localStorage.getItem($impl.CHAVE_SENHA);
+        this.WebEditUsuario.SetText(UsuarioSalvo);
+        this.WebEditSenha.SetText($impl.Desofuscar(SenhaSalva));
+        this.WebCheckBoxSalvar.SetChecked(true);
+      };
+    };
+    this.SalvarCredenciais = function (AUsuario, ASenha) {
+      window.localStorage.setItem($impl.CHAVE_LEMBRAR,"1");
+      window.localStorage.setItem($impl.CHAVE_USUARIO,AUsuario);
+      window.localStorage.setItem($impl.CHAVE_SENHA,$impl.Ofuscar(ASenha));
+    };
+    this.LimparCredenciaisSalvas = function () {
+      window.localStorage.removeItem($impl.CHAVE_LEMBRAR);
+      window.localStorage.removeItem($impl.CHAVE_USUARIO);
+      window.localStorage.removeItem($impl.CHAVE_SENHA);
     };
     this.LoadDFMValues = function () {
       pas["WEBLib.Forms"].TCustomForm.LoadDFMValues.call(this);
@@ -85295,6 +85337,7 @@ rtl.module("UnitLogin",["System","SysUtils","JS","Web","WEBLib.Graphics","WEBLib
       this.WebEditSenha = pas["WEBLib.StdCtrls"].TEdit.$create("Create$1",[this]);
       this.WebButtonEntrar = pas["WEBLib.StdCtrls"].TButton.$create("Create$1",[this]);
       this.WebButtonSair = pas["WEBLib.StdCtrls"].TButton.$create("Create$1",[this]);
+      this.WebCheckBoxSalvar = pas["WEBLib.StdCtrls"].TCheckBox.$create("Create$1",[this]);
       this.WebPanel1.BeforeLoadDFMValues();
       this.WebLabelTitulo.BeforeLoadDFMValues();
       this.WebLabel1.BeforeLoadDFMValues();
@@ -85303,37 +85346,31 @@ rtl.module("UnitLogin",["System","SysUtils","JS","Web","WEBLib.Graphics","WEBLib
       this.WebEditSenha.BeforeLoadDFMValues();
       this.WebButtonEntrar.BeforeLoadDFMValues();
       this.WebButtonSair.BeforeLoadDFMValues();
+      this.WebCheckBoxSalvar.BeforeLoadDFMValues();
       try {
         this.SetName("FormLogin");
-        this.SetWidth(800);
-        this.SetHeight(600);
+        this.SetWidth(640);
+        this.SetHeight(480);
         this.SetCaption("Login");
-        this.FFont.FCharset = 1;
-        this.FFont.SetColor(65793);
-        this.FFont.SetHeight(-13);
-        this.FFont.SetName("Segoe UI");
-        this.FFont.SetStyle({});
-        this.SetParentFont(false);
         this.SetEvent(this,"OnCreate","WebFormCreate");
         this.SetEvent(this,"OnResize","WebFormResize");
         this.WebPanel1.SetParentComponent(this);
         this.WebPanel1.SetName("WebPanel1");
-        this.WebPanel1.SetLeft(190);
-        this.WebPanel1.SetTop(160);
+        this.WebPanel1.SetLeft(100);
+        this.WebPanel1.SetTop(80);
         this.WebPanel1.SetWidth(420);
-        this.WebPanel1.SetHeight(280);
-        this.WebPanel1.SetColor(15790320);
+        this.WebPanel1.SetHeight(320);
         this.WebPanel1.SetTabOrder(0);
         this.WebLabelTitulo.SetParentComponent(this.WebPanel1);
         this.WebLabelTitulo.SetName("WebLabelTitulo");
         this.WebLabelTitulo.SetLeft(20);
         this.WebLabelTitulo.SetTop(15);
-        this.WebLabelTitulo.SetWidth(209);
-        this.WebLabelTitulo.SetHeight(32);
-        this.WebLabelTitulo.SetCaption("Acesso ao Sistema");
+        this.WebLabelTitulo.SetWidth(43);
+        this.WebLabelTitulo.SetHeight(21);
+        this.WebLabelTitulo.SetCaption("Login");
         this.WebLabelTitulo.FFont.FCharset = 1;
         this.WebLabelTitulo.FFont.SetColor(8388608);
-        this.WebLabelTitulo.FFont.SetHeight(-24);
+        this.WebLabelTitulo.FFont.SetHeight(-16);
         this.WebLabelTitulo.FFont.SetName("Segoe UI");
         this.WebLabelTitulo.FFont.SetStyle(rtl.createSet(pas["WEBLib.Graphics"].TFontStyle.fsBold));
         this.WebLabelTitulo.SetHeightPercent(100.000000000000000000);
@@ -85343,18 +85380,18 @@ rtl.module("UnitLogin",["System","SysUtils","JS","Web","WEBLib.Graphics","WEBLib
         this.WebLabel1.SetName("WebLabel1");
         this.WebLabel1.SetLeft(30);
         this.WebLabel1.SetTop(80);
-        this.WebLabel1.SetWidth(48);
-        this.WebLabel1.SetHeight(17);
-        this.WebLabel1.SetCaption("Usuário:");
+        this.WebLabel1.SetWidth(50);
+        this.WebLabel1.SetHeight(20);
+        this.WebLabel1.SetCaption("Usuário");
         this.WebLabel1.SetHeightPercent(100.000000000000000000);
         this.WebLabel1.SetWidthPercent(100.000000000000000000);
         this.WebLabel2.SetParentComponent(this.WebPanel1);
         this.WebLabel2.SetName("WebLabel2");
         this.WebLabel2.SetLeft(30);
         this.WebLabel2.SetTop(120);
-        this.WebLabel2.SetWidth(38);
-        this.WebLabel2.SetHeight(17);
-        this.WebLabel2.SetCaption("Senha:");
+        this.WebLabel2.SetWidth(40);
+        this.WebLabel2.SetHeight(20);
+        this.WebLabel2.SetCaption("Senha");
         this.WebLabel2.SetHeightPercent(100.000000000000000000);
         this.WebLabel2.SetWidthPercent(100.000000000000000000);
         this.WebEditUsuario.SetParentComponent(this.WebPanel1);
@@ -85362,7 +85399,7 @@ rtl.module("UnitLogin",["System","SysUtils","JS","Web","WEBLib.Graphics","WEBLib
         this.WebEditUsuario.SetLeft(110);
         this.WebEditUsuario.SetTop(77);
         this.WebEditUsuario.SetWidth(270);
-        this.WebEditUsuario.SetHeight(25);
+        this.WebEditUsuario.SetHeight(21);
         this.WebEditUsuario.SetHeightPercent(100.000000000000000000);
         this.WebEditUsuario.SetWidthPercent(100.000000000000000000);
         this.WebEditSenha.SetParentComponent(this.WebPanel1);
@@ -85370,7 +85407,7 @@ rtl.module("UnitLogin",["System","SysUtils","JS","Web","WEBLib.Graphics","WEBLib
         this.WebEditSenha.SetLeft(110);
         this.WebEditSenha.SetTop(117);
         this.WebEditSenha.SetWidth(270);
-        this.WebEditSenha.SetHeight(25);
+        this.WebEditSenha.SetHeight(21);
         this.WebEditSenha.SetHeightPercent(100.000000000000000000);
         this.WebEditSenha.SetPasswordChar("*");
         this.WebEditSenha.SetTabOrder(1);
@@ -85378,9 +85415,9 @@ rtl.module("UnitLogin",["System","SysUtils","JS","Web","WEBLib.Graphics","WEBLib
         this.WebButtonEntrar.SetParentComponent(this.WebPanel1);
         this.WebButtonEntrar.SetName("WebButtonEntrar");
         this.WebButtonEntrar.SetLeft(110);
-        this.WebButtonEntrar.SetTop(180);
+        this.WebButtonEntrar.SetTop(190);
         this.WebButtonEntrar.SetWidth(130);
-        this.WebButtonEntrar.SetHeight(35);
+        this.WebButtonEntrar.SetHeight(30);
         this.WebButtonEntrar.SetCaption("Entrar");
         this.WebButtonEntrar.SetHeightPercent(100.000000000000000000);
         this.WebButtonEntrar.SetTabOrder(2);
@@ -85389,14 +85426,25 @@ rtl.module("UnitLogin",["System","SysUtils","JS","Web","WEBLib.Graphics","WEBLib
         this.WebButtonSair.SetParentComponent(this.WebPanel1);
         this.WebButtonSair.SetName("WebButtonSair");
         this.WebButtonSair.SetLeft(250);
-        this.WebButtonSair.SetTop(180);
+        this.WebButtonSair.SetTop(190);
         this.WebButtonSair.SetWidth(130);
-        this.WebButtonSair.SetHeight(35);
+        this.WebButtonSair.SetHeight(30);
         this.WebButtonSair.SetCaption("Sair");
         this.WebButtonSair.SetHeightPercent(100.000000000000000000);
         this.WebButtonSair.SetTabOrder(3);
         this.WebButtonSair.SetWidthPercent(100.000000000000000000);
         this.SetEvent$1(this.WebButtonSair,this,"OnClick","WebButtonSairClick");
+        this.WebCheckBoxSalvar.SetParentComponent(this.WebPanel1);
+        this.WebCheckBoxSalvar.SetName("WebCheckBoxSalvar");
+        this.WebCheckBoxSalvar.SetLeft(110);
+        this.WebCheckBoxSalvar.SetTop(152);
+        this.WebCheckBoxSalvar.SetWidth(203);
+        this.WebCheckBoxSalvar.SetHeight(22);
+        this.WebCheckBoxSalvar.SetCaption("Salvar senha");
+        this.WebCheckBoxSalvar.SetHeightPercent(100.000000000000000000);
+        this.WebCheckBoxSalvar.SetTabOrder(4);
+        this.WebCheckBoxSalvar.SetWidthPercent(100.000000000000000000);
+        this.SetEvent$1(this.WebCheckBoxSalvar,this,"OnClick","WebCheckBoxSalvarClick");
       } finally {
         this.WebPanel1.AfterLoadDFMValues();
         this.WebLabelTitulo.AfterLoadDFMValues();
@@ -85406,6 +85454,7 @@ rtl.module("UnitLogin",["System","SysUtils","JS","Web","WEBLib.Graphics","WEBLib
         this.WebEditSenha.AfterLoadDFMValues();
         this.WebButtonEntrar.AfterLoadDFMValues();
         this.WebButtonSair.AfterLoadDFMValues();
+        this.WebCheckBoxSalvar.AfterLoadDFMValues();
       };
     };
     rtl.addIntf(this,pas["WEBLib.Controls"].IControl);
@@ -85417,14 +85466,41 @@ rtl.module("UnitLogin",["System","SysUtils","JS","Web","WEBLib.Graphics","WEBLib
     $r.addField("WebLabel2",pas["WEBLib.StdCtrls"].$rtti["TLabel"],4);
     $r.addField("WebEditUsuario",pas["WEBLib.StdCtrls"].$rtti["TEdit"],4);
     $r.addField("WebEditSenha",pas["WEBLib.StdCtrls"].$rtti["TEdit"],4);
+    $r.addField("WebCheckBoxSalvar",pas["WEBLib.StdCtrls"].$rtti["TCheckBox"],4);
     $r.addField("WebButtonEntrar",pas["WEBLib.StdCtrls"].$rtti["TButton"],4);
     $r.addField("WebButtonSair",pas["WEBLib.StdCtrls"].$rtti["TButton"],4);
     $r.addMethod("WebButtonEntrarClick",0,[["Sender",pas.System.$rtti["TObject"]]],4);
     $r.addMethod("WebButtonSairClick",0,[["Sender",pas.System.$rtti["TObject"]]],4);
     $r.addMethod("WebFormCreate",0,[["Sender",pas.System.$rtti["TObject"]]],4);
     $r.addMethod("WebFormResize",0,[["Sender",pas.System.$rtti["TObject"]]],4);
+    $r.addMethod("WebCheckBoxSalvarClick",0,[["Sender",pas.System.$rtti["TObject"]]],4);
   });
   this.FormLogin = null;
+  $mod.$implcode = function () {
+    $impl.CHAVE_USUARIO = "login_usuario_salvo";
+    $impl.CHAVE_SENHA = "login_senha_salva";
+    $impl.CHAVE_LEMBRAR = "login_lembrar";
+    $impl.Ofuscar = function (S) {
+      var Result = "";
+      if (S === "") return "";
+      try {
+        Result = window.btoa(S);
+      } catch ($e) {
+        Result = "";
+      };
+      return Result;
+    };
+    $impl.Desofuscar = function (S) {
+      var Result = "";
+      if (S === "") return "";
+      try {
+        Result = window.atob(S);
+      } catch ($e) {
+        Result = "";
+      };
+      return Result;
+    };
+  };
 },["Unit1"]);
 rtl.module("program",["System","WEBLib.Forms","Unit1","UnitLogin"],function () {
   "use strict";
