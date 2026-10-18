@@ -48861,18 +48861,12 @@ rtl.module("Unit2",["System","SysUtils","Classes","JS","Web","WEBLib.Graphics","
     this.WebFormCreate = function (Sender) {
       var LUser = "";
       LUser = window.sessionStorage.getItem("usuario");
-      if ((LUser === "") || (LUser === "null") || (LUser === "undefined")) LUser = "visitante";
+      if ((LUser === "") || (LUser === "null")) LUser = "visitante";
       this.lblUsuario.SetCaption("Bem-vindo(a), " + LUser + "!");
     };
     this.btnSairClick = function (Sender) {
       window.sessionStorage.removeItem("usuario");
-      if (!(pas.Unit1.Form1 != null)) pas["WEBLib.Forms"].Application.CreateForm(pas.Unit1.TForm1,{p: pas.Unit1, get: function () {
-          return this.p.Form1;
-        }, set: function (v) {
-          this.p.Form1 = v;
-        }});
-      pas.Unit1.Form1.Show$1();
-      this.Hide();
+      window.location.hash = "#Form1";
     };
     this.LoadDFMValues = function () {
       pas["WEBLib.Forms"].TCustomForm.LoadDFMValues.call(this);
@@ -48944,6 +48938,9 @@ rtl.module("Unit2",["System","SysUtils","Classes","JS","Web","WEBLib.Graphics","
     $r.addMethod("btnSairClick",0,[["Sender",pas.System.$rtti["TObject"]]]);
   });
   this.Form2 = null;
+  $mod.$init = function () {
+    pas.Classes.RegisterClass($mod.TForm2);
+  };
 },["Unit1"]);
 rtl.module("Unit1",["System","SysUtils","Classes","JS","Web","WEBLib.Graphics","WEBLib.Controls","WEBLib.Forms","WEBLib.Dialogs","WEBLib.Controls","WEBLib.StdCtrls","WEBLib.StdCtrls"],function () {
   "use strict";
