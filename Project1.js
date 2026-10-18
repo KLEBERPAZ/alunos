@@ -48880,7 +48880,7 @@ rtl.module("Unit2",["System","SysUtils","Classes","JS","Web","WEBLib.Graphics","
         this.SetName("Form2");
         this.SetWidth(640);
         this.SetHeight(400);
-        this.SetCaption("PÃ¡gina Principal");
+        this.SetCaption("Página Principal");
         this.SetVisible(true);
         this.SetEvent(this,"OnCreate","WebFormCreate");
         this.lblBemVindo.SetParentComponent(this);
@@ -49038,9 +49038,9 @@ rtl.module("Unit1",["System","SysUtils","Classes","JS","Web","WEBLib.Graphics","
         this.lblMsg.SetName("lblMsg");
         this.lblMsg.SetLeft(140);
         this.lblMsg.SetTop(270);
-        this.lblMsg.SetWidth(170);
+        this.lblMsg.SetWidth(160);
         this.lblMsg.SetHeight(17);
-        this.lblMsg.SetCaption("UsuÃ¡rio ou senha invÃ¡lidos.");
+        this.lblMsg.SetCaption("Usuário ou senha inválidos.");
         this.lblMsg.FFont.FCharset = 1;
         this.lblMsg.FFont.SetColor(255);
         this.lblMsg.FFont.SetHeight(-13);
@@ -49057,7 +49057,7 @@ rtl.module("Unit1",["System","SysUtils","Classes","JS","Web","WEBLib.Graphics","
         this.edtUser.SetWidth(280);
         this.edtUser.SetHeight(28);
         this.edtUser.SetHeightPercent(100.000000000000000000);
-        this.edtUser.SetTextHint("Digite o nome de usuÃ¡rio");
+        this.edtUser.SetTextHint("Digite o nome de usuário");
         this.edtUser.SetWidthPercent(100.000000000000000000);
         this.edtPass.SetParentComponent(this);
         this.edtPass.SetName("edtPass");
