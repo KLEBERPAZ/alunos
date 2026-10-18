@@ -61987,10 +61987,10 @@ rtl.module("Unit2",["System","SysUtils","Classes","JS","Web","WEBLib.Graphics","
         this.lblBemVindo.SetName("lblBemVindo");
         this.lblBemVindo.SetLeft(300);
         this.lblBemVindo.SetTop(200);
-        this.lblBemVindo.SetWidth(275);
+        this.lblBemVindo.SetWidth(271);
         this.lblBemVindo.SetHeight(32);
         this.lblBemVindo.SetAlignment(pas.Classes.TAlignment.taCenter);
-        this.lblBemVindo.SetCaption("Bem-vindo(a) Ã  Form2!");
+        this.lblBemVindo.SetCaption("Bem-vindo(a) a  Form2!");
         this.lblBemVindo.FFont.FCharset = 1;
         this.lblBemVindo.FFont.SetColor(65793);
         this.lblBemVindo.FFont.SetHeight(-24);
