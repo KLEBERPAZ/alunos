@@ -48861,12 +48861,18 @@ rtl.module("Unit2",["System","SysUtils","Classes","JS","Web","WEBLib.Graphics","
     this.WebFormCreate = function (Sender) {
       var LUser = "";
       LUser = window.sessionStorage.getItem("usuario");
-      if ((LUser === "") || (LUser === "null")) LUser = "visitante";
+      if ((LUser === "") || (LUser === "null") || (LUser === "undefined")) LUser = "visitante";
       this.lblUsuario.SetCaption("Bem-vindo(a), " + LUser + "!");
     };
     this.btnSairClick = function (Sender) {
       window.sessionStorage.removeItem("usuario");
-      window.location.hash = "#Form1";
+      if (!(pas.Unit1.Form1 != null)) pas["WEBLib.Forms"].Application.CreateForm(pas.Unit1.TForm1,{p: pas.Unit1, get: function () {
+          return this.p.Form1;
+        }, set: function (v) {
+          this.p.Form1 = v;
+        }});
+      pas.Unit1.Form1.Show$1();
+      this.Hide();
     };
     this.LoadDFMValues = function () {
       pas["WEBLib.Forms"].TCustomForm.LoadDFMValues.call(this);
@@ -48938,9 +48944,6 @@ rtl.module("Unit2",["System","SysUtils","Classes","JS","Web","WEBLib.Graphics","
     $r.addMethod("btnSairClick",0,[["Sender",pas.System.$rtti["TObject"]]]);
   });
   this.Form2 = null;
-  $mod.$init = function () {
-    pas.Classes.RegisterClass($mod.TForm2);
-  };
 },["Unit1"]);
 rtl.module("Unit1",["System","SysUtils","Classes","JS","Web","WEBLib.Graphics","WEBLib.Controls","WEBLib.Forms","WEBLib.Dialogs","WEBLib.Controls","WEBLib.StdCtrls","WEBLib.StdCtrls"],function () {
   "use strict";
@@ -48973,11 +48976,20 @@ rtl.module("Unit1",["System","SysUtils","Classes","JS","Web","WEBLib.Graphics","
       LPass = this.edtPass.GetText();
       if ((LUser === "123") && (LPass === "123")) {
         window.sessionStorage.setItem("usuario",LUser);
-        window.location.hash = "#Form2";
+        if (!(pas.Unit2.Form2 != null)) pas["WEBLib.Forms"].Application.CreateForm(pas.Unit2.TForm2,{p: pas.Unit2, get: function () {
+            return this.p.Form2;
+          }, set: function (v) {
+            this.p.Form2 = v;
+          }});
+        pas.Unit2.Form2.Show$1();
+        this.Hide();
       } else {
         this.lblMsg.SetCaption("Usuário ou senha inválidos.");
         this.lblMsg.SetVisible(true);
       };
+    };
+    this.WebFormCreate = function (Sender) {
+      this.lblMsg.SetVisible(false);
     };
     this.LoadDFMValues = function () {
       pas["WEBLib.Forms"].TCustomForm.LoadDFMValues.call(this);
@@ -49101,13 +49113,11 @@ rtl.module("Unit1",["System","SysUtils","Classes","JS","Web","WEBLib.Graphics","
     $r.addField("lblMsg",pas["WEBLib.StdCtrls"].$rtti["TLabel"]);
     $r.addField("btnLogin",pas["WEBLib.StdCtrls"].$rtti["TButton"]);
     $r.addMethod("btnLoginClick",0,[["Sender",pas.System.$rtti["TObject"]]]);
+    $r.addMethod("WebFormCreate",0,[["Sender",pas.System.$rtti["TObject"]]]);
   });
   this.Form1 = null;
-  $mod.$init = function () {
-    pas.Classes.RegisterClass($mod.TForm1);
-  };
 },["Unit2"]);
-rtl.module("program",["System","WEBLib.Forms","WEBLib.Forms","Unit1","Unit2"],function () {
+rtl.module("program",["System","WEBLib.Forms","Unit1","Unit2"],function () {
   "use strict";
   var $mod = this;
   $mod.$implcode = function () {
@@ -49121,13 +49131,17 @@ rtl.module("program",["System","WEBLib.Forms","WEBLib.Forms","Unit1","Unit2"],fu
   };
   $mod.$main = function () {
     pas["WEBLib.Forms"].Application.Initialize();
-    if (!pas["WEBLib.Forms"].Application.Route()) {
-      pas["WEBLib.Forms"].Application.CreateFormDirect(pas.Unit1.TForm1,{p: pas.Unit1, get: function () {
-          return this.p.Form1;
-        }, set: function (v) {
-          this.p.Form1 = v;
-        }});
-    };
+    pas["WEBLib.Forms"].Application.FMainFormOnTaskBar = true;
+    pas["WEBLib.Forms"].Application.CreateFormDirect(pas.Unit1.TForm1,{p: pas.Unit1, get: function () {
+        return this.p.Form1;
+      }, set: function (v) {
+        this.p.Form1 = v;
+      }});
+    pas["WEBLib.Forms"].Application.CreateFormDirect(pas.Unit2.TForm2,{p: pas.Unit2, get: function () {
+        return this.p.Form2;
+      }, set: function (v) {
+        this.p.Form2 = v;
+      }});
     pas["WEBLib.Forms"].Application.Run();
   };
 });
